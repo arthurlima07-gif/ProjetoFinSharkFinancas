@@ -1,9 +1,28 @@
-function App() {
+import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
+import Navbar from "./components/Navbar/Navbar";
+import HomePage from "./pages/HomePage/HomePage";
+
+const Layout = () => {
   return (
-    <div>
-      <h1 className="text-3xl font-bold text-lightBlue">FinShark</h1>
-    </div>
+    <>
+      <Navbar />
+      <Outlet />
+    </>
   );
+};
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Layout />,
+    children: [
+      { path: "", element: <HomePage /> },
+    ],
+  },
+]);
+
+function App() {
+  return <RouterProvider router={router} />;
 }
 
 export default App;
