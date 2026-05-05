@@ -8,6 +8,7 @@ import HomePage from "./pages/HomePage/HomePage";
 import SearchPage from "./pages/SearchPage/SearchPage";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
+import StockPage from "./pages/StockPage/StockPage";
 
 const Layout = () => {
   return (
@@ -31,6 +32,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <SearchPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "company/:ticker",
+        element: (
+          <ProtectedRoute>
+            <StockPage />
           </ProtectedRoute>
         ),
       },
