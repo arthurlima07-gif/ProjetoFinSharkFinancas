@@ -1,16 +1,25 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import {
   getCompanyProfileAPI,
   getStockQuoteAPI,
 } from "../../services/StockService";
+import {
+  getCommentsAPI,
+  createCommentAPI,
+} from "../../services/CommentService";
 import type { CompanyProfile, StockQuote } from "../../models/Stock";
+import type { CommentGet, CommentPost } from "../../models/Comment";
 import Spinner from "../../components/Spinner/Spinner";
+import StockCommentForm from "../../components/StockCommentForm/StockCommentForm";
+import StockCommentList from "../../components/StockCommentList/StockCommentList";
 
 const StockPage = () => {
   const { ticker } = useParams<{ ticker: string }>();
   const [profile, setProfile] = useState<CompanyProfile | null>(null);
   const [quote, setQuote] = useState<StockQuote | null>(null);
+  const [comments, setComments] = useState<CommentGet[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -23,10 +32,23 @@ const StockPage = () => {
       ]);
       setProfile(profileData);
       setQuote(quoteData);
+      getCommentsAPI(ticker)
+        .then((res) => setComments(res.data))
+        .catch(() => {});
       setIsLoading(false);
     };
     fetchData();
   }, [ticker]);
+
+  const handleCommentCreated = async (comment: CommentPost) => {
+    if (!ticker) return;
+    await createCommentAPI(ticker, comment)
+      .then((res) => {
+        toast.success("Comment posted!");
+        setComments([...comments, res.data]);
+      })
+      .catch(() => toast.warning("Could not post comment."));
+  };
 
   if (isLoading) return <Spinner />;
 
@@ -157,6 +179,13 @@ const StockPage = () => {
           </div>
 
         </div>
+      </div>
+
+      {/* COMMENTS */}
+      <div>
+        <h2 className="text-xl font-bold mb-2 text-darkBlue">Comments</h2>
+        <StockCommentForm onCommentCreated={handleCommentCreated} />
+        <StockCommentList comments={comments} />
       </div>
 
     </div>
