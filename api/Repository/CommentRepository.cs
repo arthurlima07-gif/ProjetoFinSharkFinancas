@@ -17,9 +17,14 @@ namespace api.Repository
 
         public async Task<List<Comment>> GetAllAsync(QueryObject queryObject)
         {
-            return await _context.Comments
+            var comments = _context.Comments
                 .Include(a => a.AppUser)
-                .ToListAsync();
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(queryObject.Symbol))
+                comments = comments.Where(c => c.Stock!.Symbol == queryObject.Symbol);
+
+            return await comments.ToListAsync();
         }
 
         public async Task<Comment?> GetByIdAsync(int id)
