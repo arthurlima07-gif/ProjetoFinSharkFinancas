@@ -43,7 +43,19 @@ namespace api.Controllers
             var appUser = await _userManager.FindByNameAsync(username);
             var stock = await _stockRepo.GetBySymbolAsync(symbol);
 
-            if (stock == null) return BadRequest("Stock not found");
+            if (stock == null)
+            {
+                stock = new Stock
+                {
+                    Symbol = symbol.ToUpper(),
+                    CompanyName = symbol.ToUpper(),
+                    Purchase = 0,
+                    LastDiv = 0,
+                    Industry = "Unknown",
+                    MarketCap = 0
+                };
+                stock = await _stockRepo.CreateAsync(stock);
+            }
 
             var userPortfolio = await _portfolioRepo.GetUserPortfolio(appUser!);
 
