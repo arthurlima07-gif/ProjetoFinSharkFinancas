@@ -4,11 +4,18 @@ import type { SearchResults, CompanyProfile, StockQuote } from "../models/Stock"
 const TOKEN = import.meta.env.VITE_FINNHUB_TOKEN as string;
 const BASE = "https://finnhub.io/api/v1";
 
+// Instância separada SEM o header Authorization global do axios
+const finnhubClient = axios.create({
+  headers: {
+    Authorization: undefined,
+  },
+});
+
 export const searchStocksAPI = async (
   query: string
 ): Promise<SearchResults | null> => {
   try {
-    const { data } = await axios.get<SearchResults>(
+    const { data } = await finnhubClient.get<SearchResults>(
       `${BASE}/search?q=${encodeURIComponent(query)}&token=${TOKEN}`
     );
     return data;
@@ -22,7 +29,7 @@ export const getCompanyProfileAPI = async (
   symbol: string
 ): Promise<CompanyProfile | null> => {
   try {
-    const { data } = await axios.get<CompanyProfile>(
+    const { data } = await finnhubClient.get<CompanyProfile>(
       `${BASE}/stock/profile2?symbol=${symbol}&token=${TOKEN}`
     );
     return data;
@@ -36,7 +43,7 @@ export const getStockQuoteAPI = async (
   symbol: string
 ): Promise<StockQuote | null> => {
   try {
-    const { data } = await axios.get<StockQuote>(
+    const { data } = await finnhubClient.get<StockQuote>(
       `${BASE}/quote?symbol=${symbol}&token=${TOKEN}`
     );
     return data;
