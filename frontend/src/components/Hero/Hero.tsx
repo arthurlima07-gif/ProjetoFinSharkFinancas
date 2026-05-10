@@ -21,6 +21,13 @@ const Hero = () => {
             </Link>
           </div>
         </div>
+        <div className="flex items-center justify-center mb-24 lg:mb-0 lg:w-1/2">
+          <img
+            src="/hero.png"
+            className="w-64 lg:w-96 rounded-3xl shadow-2xl"
+            alt="FinShark App"
+          />
+        </div>
       </div>
     </section>
   );
